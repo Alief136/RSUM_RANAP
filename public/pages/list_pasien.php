@@ -55,7 +55,7 @@ require __DIR__ . '/../partials/header.php';
     <meta charset="UTF-8">
     <title>E-Ranap RS UNIPDU MEDIKA</title>
     <link href="../css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../css/navbar,css">
+    <link rel="stylesheet" href="../css/navbar.css">
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <style>
         .fab-add {

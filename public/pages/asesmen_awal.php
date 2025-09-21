@@ -1,5 +1,5 @@
 <link href="../css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="../css/navbar,css">
+<link rel="stylesheet" href="../css/navbar.css">
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 require_once '../action/get_pasien_info.php'; // Load helper dari action/
@@ -217,22 +217,18 @@ function section($title)
                                 <!-- Bagian Detail Penerimaan (hanya Ruang dan Kelas yang diubah) -->
                                 <div class="col-md-3 mb-2">
                                     <label class="form-label fw-bold text-gray"><i class="fas fa-door-open me-1"></i> Ruang</label>
-                                    <select class="form-select" name="ruang" id="ruang_dropdown">
+                                    <select class="form-select" name="ruang" id="ruang_dropdown" required>
                                         <option value="" disabled <?= empty($_POST['ruang']) ? 'selected' : '' ?>>Pilih Ruang</option>
                                         <?php
                                         try {
                                             // Ambil semua kamar dan kelompokkan berdasarkan prefiks kd_kamar
                                             $stmt_kamar = $pdo->query("SELECT kd_kamar, kelas FROM kamar WHERE statusdata = '1' ORDER BY kd_kamar");
                                             $kamar_list = $stmt_kamar->fetchAll(PDO::FETCH_ASSOC);
-
-                                            // Kelompokkan kamar berdasarkan prefiks kd_kamar
                                             $grouped_kamar = [];
                                             foreach ($kamar_list as $kamar) {
-                                                // Ekstrak prefiks (misal, "IRNA" dari "IRNA-02")
                                                 $prefix = preg_match('/^([A-Z]+)/i', $kamar['kd_kamar'], $matches) ? $matches[1] : 'Lainnya';
                                                 $grouped_kamar[$prefix][] = $kamar;
                                             }
-
                                             // Urutkan prefiks
                                             ksort($grouped_kamar);
 
@@ -251,15 +247,10 @@ function section($title)
                                         ?>
                                     </select>
                                 </div>
+
                                 <div class="col-md-3 mb-2">
                                     <label class="form-label fw-bold text-gray"><i class="fas fa-star me-1"></i> Kelas</label>
-                                    <select class="form-select" name="kelas" id="kelas_dropdown">
-                                        <option value="" disabled <?= empty($_POST['kelas']) ? 'selected' : '' ?>>Pilih...</option>
-                                        <option value="III">III</option>
-                                        <option value="II">II</option>
-                                        <option value="I">I</option>
-                                        <option value="VIP">VIP</option>
-                                    </select>
+                                    <input type="text" class="form-control" name="kelas" id="kelas_input" value="<?= esc($_POST['kelas'] ?? '') ?>" readonly placeholder="Otomatis terisi">
                                 </div>
                             </div>
                         </div>
@@ -1189,11 +1180,10 @@ function section($title)
             </div>
             <div class="button-group">
                 <?php
-                // Existing content of asesmen_awal.php (assumed)
-                // Add this button where your other buttons are (e.g., inside or after the form)
-                $no_rawat = isset($_GET['no_rawat']) ? $_GET['no_rawat'] : ''; // Ensure no_rawat is available
+
+                $no_rawat = isset($_GET['no_rawat']) ? $_GET['no_rawat'] : '';
                 ?>
-                <!-- Existing buttons, e.g., Save, Cancel, etc. -->
+
                 <a href="riwayat_asesmen_pasien.php?no_rawat=<?= urlencode($no_rawat) ?>&no_rkm_medis=<?= urlencode($no_rkm_medis) ?>"
                     class="btn btn-secondary">
                     Lihat Riwayat Asesmen
@@ -1205,23 +1195,38 @@ function section($title)
 <script>
     document.getElementById('ruang_dropdown').addEventListener('change', function() {
         const selectedOption = this.options[this.selectedIndex];
-        const kelas = selectedOption ? selectedOption.getAttribute('data-kelas') : '';
-        const kelasDropdown = document.getElementById('kelas_dropdown');
+        const kelasInput = document.getElementById('kelas_input');
 
-        // Mapping kelas dari tabel kamar ke opsi dropdown
-        const kelasMapping = {
-            'Kelas 3': 'III',
-            'Kelas 2': 'II',
-            'Kelas 1': 'I',
-            'VIP': 'VIP'
-        };
+        if (selectedOption && selectedOption.value) {
+            let kelas = selectedOption.getAttribute('data-kelas') || '';
 
-        if (kelas && kelasMapping[kelas]) {
-            kelasDropdown.value = kelasMapping[kelas]; // Isi otomatis kolom Kelas
+            // Konversi format kelas dari database ke format yang diinginkan
+            const kelasMapping = {
+                'Kelas 1': 'I',
+                'Kelas 2': 'II',
+                'Kelas 3': 'III',
+                'Kelas VIP': 'VIP',
+                'Kelas VVIP': 'VVIP',
+                'Kelas Utama': 'Utama'
+            };
+
+            // Set nilai kelas berdasarkan mapping atau gunakan nilai asli jika tidak ada di mapping
+            kelasInput.value = kelasMapping[kelas] || kelas;
         } else {
-            kelasDropdown.value = ''; // Reset jika tidak ada kelas valid
+            kelasInput.value = '';
         }
     });
+
+    // Trigger change event jika ada nilai yang sudah dipilih saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', function() {
+        const ruangDropdown = document.getElementById('ruang_dropdown');
+        if (ruangDropdown.value) {
+            ruangDropdown.dispatchEvent(new Event('change'));
+        }
+    });
+
+
+
 
     document.querySelectorAll('input[name=" keputusan_akhir"]').forEach(radio => {
         radio.addEventListener('change', function() {
@@ -1259,10 +1264,16 @@ function section($title)
 <script>
     function printPDF() {
         const form = document.getElementById('asesmenForm');
+        const originalAction = form.action; // simpan action asli
+        const originalTarget = form.target; // simpan target asli
+
+        // Ubah ke cetak PDF
         form.action = '../action/cetak_pdf_asesmen_awal_medis_ranap.php';
         form.target = '_blank';
         form.submit();
-        form.action = '../actions/save_asesmen_awal_medis_ranap.php';
-        form.target = '';
+
+        // Balikkan lagi ke asal (supaya tombol Simpan jalan normal)
+        form.action = originalAction;
+        form.target = originalTarget;
     }
 </script>

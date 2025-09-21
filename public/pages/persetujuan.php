@@ -1,5 +1,5 @@
 <link href="../css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="../css/navbar,css">
+<link rel="stylesheet" href="../css/navbar.css">
 <link rel="stylesheet" href="../css/pagesStyle.css">
 
 <?php
@@ -40,7 +40,7 @@ function section($title)
             </div>
         <?php endif; ?>
 
-        <form method="post" action="" class="needs-validation" novalidate>
+        <form method="post" action="../action/save_persetujuan_anestesi.php" class="needs-validation" novalidate>
             <!-- Identitas Pasien -->
             <?= section("Identitas Pasien") ?>
             <div class="row mb-3 d-flex align-items-stretch">
@@ -104,19 +104,45 @@ function section($title)
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold text-gray"><i class="fas fa-door-open me-1"></i> Ruang</label>
-                                    <input type="text" class="form-control" name="ruang" required>
-                                    <div class="invalid-feedback">Ruang wajib diisi.</div>
+                                    <select class="form-select" name="ruang" id="ruang_dropdown" required>
+                                        <option value="" disabled <?= empty($_POST['ruang']) ? 'selected' : '' ?>>Pilih Ruang</option>
+                                        <?php
+                                        try {
+                                            // Ambil semua kamar dan kelompokkan berdasarkan prefiks kd_kamar
+                                            $stmt_kamar = $pdo->query("SELECT kd_kamar, kelas FROM kamar WHERE statusdata = '1' ORDER BY kd_kamar");
+                                            $kamar_list = $stmt_kamar->fetchAll(PDO::FETCH_ASSOC);
+
+                                            // Kelompokkan kamar berdasarkan prefiks kd_kamar
+                                            $grouped_kamar = [];
+                                            foreach ($kamar_list as $kamar) {
+                                                // Ekstrak prefiks (misal, "IRNA" dari "IRNA-02")
+                                                $prefix = preg_match('/^([A-Z]+)/i', $kamar['kd_kamar'], $matches) ? $matches[1] : 'Lainnya';
+                                                $grouped_kamar[$prefix][] = $kamar;
+                                            }
+
+                                            // Urutkan prefiks
+                                            ksort($grouped_kamar);
+
+                                            foreach ($grouped_kamar as $prefix => $kamar_group) {
+                                                echo "<optgroup label='" . esc($prefix) . "'>";
+                                                foreach ($kamar_group as $kamar) {
+                                                    $selected = ($_POST['ruang'] ?? '') === $kamar['kd_kamar'] ? 'selected' : '';
+                                                    echo "<option value='" . esc($kamar['kd_kamar']) . "' data-kelas='" . esc($kamar['kelas']) . "' $selected>" . esc($kamar['kd_kamar']) . "</option>";
+                                                }
+                                                echo "</optgroup>";
+                                            }
+                                        } catch (PDOException $e) {
+                                            error_log("Error fetching ruang: " . $e->getMessage());
+                                            echo "<option value=''>Error: Tidak dapat memuat data ruang</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                    <div class="invalid-feedback">Ruang wajib dipilih.</div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold text-gray"><i class="fas fa-star me-1"></i> Kelas</label>
-                                    <select class="form-select" name="kelas" required>
-                                        <option value="" disabled selected>Pilih...</option>
-                                        <option>III</option>
-                                        <option>II</option>
-                                        <option>I</option>
-                                        <option>VIP</option>
-                                    </select>
-                                    <div class="invalid-feedback">Kelas wajib dipilih.</div>
+                                    <input type="text" class="form-control" name="kelas" id="kelas_input" readonly placeholder="Otomatis terisi" required>
+                                    <div class="invalid-feedback">Kelas wajib diisi.</div>
                                 </div>
                             </div>
                         </div>
@@ -382,4 +408,22 @@ function section($title)
     </div>
 </div>
 
-<script src="../js/main.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ruangDropdown = document.getElementById('ruang_dropdown');
+        const kelasInput = document.getElementById('kelas_input');
+
+        // Fungsi untuk mengisi kolom kelas berdasarkan pilihan ruang
+        function updateKelas() {
+            const selectedOption = ruangDropdown.options[ruangDropdown.selectedIndex];
+            const kelas = selectedOption ? selectedOption.getAttribute('data-kelas') : '';
+            kelasInput.value = kelas || ''; // Isi kolom kelas atau kosongkan jika tidak ada data
+        }
+
+        // Panggil updateKelas saat halaman dimuat untuk mengisi kelas awal (jika ada ruang yang sudah dipilih)
+        updateKelas();
+
+        // Tambahkan event listener untuk mengupdate kelas saat ruang berubah
+        ruangDropdown.addEventListener('change', updateKelas);
+    });
+</script>

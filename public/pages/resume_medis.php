@@ -1,5 +1,5 @@
 <link href="../css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="../css/navbar,css">
+<link rel="stylesheet" href="../css/navbar.css">
 <link rel="stylesheet" href="../css/pagesStyle.css">
 
 <?php
@@ -85,20 +85,78 @@ function section($title)
                                 </div>
                                 <div class="col-md-3 mb-3">
                                     <label class="form-label fw-bold text-gray"><i class="fas fa-door-open me-1"></i> Ruang</label>
-                                    <input type="text" class="form-control" name="ruang" required>
-                                    <div class="invalid-feedback">Ruang wajib diisi.</div>
+                                    <select class="form-select" name="ruang" id="ruang_dropdown" required>
+                                        <option value="" disabled selected>Pilih Ruang</option>
+                                        <?php
+                                        try {
+                                            // Ambil semua kamar dan kelompokkan berdasarkan prefiks kd_kamar
+                                            $stmt_kamar = $pdo->query("SELECT kd_kamar, kelas FROM kamar WHERE statusdata = '1' ORDER BY kd_kamar");
+                                            $kamar_list = $stmt_kamar->fetchAll(PDO::FETCH_ASSOC);
+
+                                            $grouped_kamar = [];
+                                            foreach ($kamar_list as $kamar) {
+
+                                                $prefix = preg_match('/^([A-Z]+)/i', $kamar['kd_kamar'], $matches) ? $matches[1] : 'Lainnya';
+                                                $grouped_kamar[$prefix][] = $kamar;
+                                            }
+
+                                            // Urutkan prefiks
+                                            ksort($grouped_kamar);
+
+                                            foreach ($grouped_kamar as $prefix => $kamar_group) {
+                                                echo "<optgroup label='" . esc($prefix) . "'>";
+                                                foreach ($kamar_group as $kamar) {
+                                                    echo "<option value='" . esc($kamar['kd_kamar']) . "' data-kelas='" . esc($kamar['kelas']) . "'>" . esc($kamar['kd_kamar']) . "</option>";
+                                                }
+                                                echo "</optgroup>";
+                                            }
+                                        } catch (PDOException $e) {
+                                            error_log("Error fetching ruang: " . $e->getMessage());
+                                            echo "<option value=''>Error: Tidak dapat memuat data ruang</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                    <div class="invalid-feedback">Ruang wajib dipilih.</div>
                                 </div>
                                 <div class="col-md-3 mb-3">
                                     <label class="form-label fw-bold text-gray"><i class="fas fa-star me-1"></i> Kelas</label>
-                                    <select class="form-select" name="kelas" required>
-                                        <option value="" disabled selected>Pilih</option>
-                                        <option>III</option>
-                                        <option>II</option>
-                                        <option>I</option>
-                                        <option>VIP</option>
-                                    </select>
-                                    <div class="invalid-feedback">Kelas wajib dipilih.</div>
+                                    <input type="text" class="form-control" name="kelas" id="kelas_input" readonly placeholder="Otomatis terisi " required>
+                                    <div class="invalid-feedback">Kelas wajib terisi.</div>
                                 </div>
+
+                                <script>
+                                    document.getElementById('ruang_dropdown').addEventListener('change', function() {
+                                        const selectedOption = this.options[this.selectedIndex];
+                                        const kelasInput = document.getElementById('kelas_input');
+
+                                        if (selectedOption && selectedOption.value) {
+                                            let kelas = selectedOption.getAttribute('data-kelas') || '';
+
+                                            // Konversi format kelas dari database ke format yang diinginkan
+                                            const kelasMapping = {
+                                                'Kelas 1': 'I',
+                                                'Kelas 2': 'II',
+                                                'Kelas 3': 'III',
+                                                'Kelas VIP': 'VIP',
+                                                'Kelas VVIP': 'VVIP',
+                                                'Kelas Utama': 'Utama'
+                                            };
+
+
+                                            kelasInput.value = kelasMapping[kelas] || kelas;
+                                        } else {
+                                            kelasInput.value = '';
+                                        }
+                                    });
+
+
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        const ruangDropdown = document.getElementById('ruang_dropdown');
+                                        if (ruangDropdown.value) {
+                                            ruangDropdown.dispatchEvent(new Event('change'));
+                                        }
+                                    });
+                                </script>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-bold text-gray"><i class="fas fa-home me-1"></i> Alamat</label>
@@ -422,3 +480,36 @@ function section($title)
 </div>
 
 <script src="../js/main.js"></script>
+
+<script>
+    document.getElementById('ruang_dropdown').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const kelasInput = document.getElementById('kelas_input');
+
+        if (selectedOption && selectedOption.value) {
+            let kelas = selectedOption.getAttribute('data-kelas') || '';
+
+            // Konversi format kelas dari database ke format yang diinginkan
+            const kelasMapping = {
+                'Kelas 1': 'I',
+                'Kelas 2': 'II',
+                'Kelas 3': 'III',
+                'Kelas VIP': 'VIP',
+                'Kelas VVIP': 'VVIP',
+                'Kelas Utama': 'Utama'
+            };
+
+
+            kelasInput.value = kelasMapping[kelas] || kelas;
+        } else {
+            kelasInput.value = '';
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const ruangDropdown = document.getElementById('ruang_dropdown');
+        if (ruangDropdown.value) {
+            ruangDropdown.dispatchEvent(new Event('change'));
+        }
+    });
+</script>

@@ -1,5 +1,4 @@
-<link href="../css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="../css/navbar,css">
+.
 <?php
 session_start();
 require_once __DIR__ . '/../../config/db.php';

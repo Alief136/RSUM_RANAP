@@ -1,5 +1,5 @@
 <link href="../css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="../css/navbar,css">
+<link rel="stylesheet" href="../css/navbar.css">
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 require_once __DIR__ . '/../../config/db.php';
