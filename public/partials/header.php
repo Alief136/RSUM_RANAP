@@ -7,7 +7,7 @@ $nr = $nr ?? ($_GET['no_rawat'] ?? '');
 $cur = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 
 // List of patient-related pages where navigation links should appear
-$patientPages = ['detail.php', 'asesmen.php', 'permintaan_lab.php', 'resep_obat.php', 'asesmen_awal.php', 'persetujuan.php', 'penolakan.php', 'resume_medis.php'];
+$patientPages = ['detail.php', 'asesmen.php', 'permintaan_lab.php', 'resep_obat.php', 'asesmen_awal.php', 'persetujuan.php', 'penolakan.php', 'resume_medis.php', 'riwayat_asesmen_pasien.php'];
 
 function active($file, $cur)
 {
@@ -17,7 +17,9 @@ function active($file, $cur)
 function patient_href($file, $rm, $nr = '')
 {
   $query = $rm ? "no_rkm_medis=" . urlencode($rm) : '';
-  if ($nr && in_array($file, ['asesmen_awal.php'])) {
+
+  // PERBAIKAN: Selalu tambahkan no_rawat jika tersedia, tanpa syarat halaman tertentu
+  if ($nr) {
     $query .= $query ? '&' : '';
     $query .= "no_rawat=" . urlencode($nr);
   }
@@ -41,7 +43,9 @@ if (!$fotoLogin) $fotoLogin = 'img/default.png';
   <?php if (!empty($extra_css)) foreach ((array)$extra_css as $href): ?>
     <link rel="stylesheet" href="<?= htmlspecialchars($href) ?>">
   <?php endforeach; ?>
-
+  <style>
+    /* ... (CSS code is the same) ... */
+  </style>
 </head>
 
 <body>
@@ -52,13 +56,12 @@ if (!$fotoLogin) $fotoLogin = 'img/default.png';
         <span class="navbar-toggler-icon"></span>
       </button>
 
-
       <div class="collapse navbar-collapse" id="topnav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
             <a class="nav-link <?= active('list_pasien.php', $cur) ?>" href="list_pasien.php">Daftar Pasien</a>
           </li>
-          <?php if ($rm && $cur !== 'list_pasien.php' && in_array($cur, $patientPages)): ?>
+          <?php if ($rm && in_array($cur, $patientPages)): ?>
             <li class="nav-item">
               <a class="nav-link <?= active('detail.php', $cur) ?>" href="<?= patient_href('detail.php', $rm, $nr) ?>">Detail Pasien</a>
             </li>

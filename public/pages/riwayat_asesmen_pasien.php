@@ -313,11 +313,13 @@ if (!empty($riwayats)) {
         <?php endif; ?>
 
         <div class="text-center mt-4">
-            <a href="asesmen_awal.php?no_rawat=<?= urlencode($no_rawat) ?>" class="btn btn-primary">Kembali ke Asesmen</a>
+            <a href="asesmen_awal.php?no_rawat=<?= urlencode($no_rawat) ?>&no_rkm_medis=<?= urlencode($pasien_info['no_rkm_medis'] ?? '') ?>"
+                class="btn btn-primary">
+                Kembali ke Asesmen
+            </a>
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

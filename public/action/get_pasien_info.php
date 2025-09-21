@@ -1,6 +1,6 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
-require_once '../../config/db.php'; // Pastikan db.php ada di config/
+require_once __DIR__ . '/../../config/db.php'; // Pastikan db.php ada di config/
 
 // Helper function esc (untuk keamanan output)
 if (!function_exists('esc')) {
@@ -20,6 +20,10 @@ if (!function_exists('esc')) {
 function getPatientData($pdo, $no_rawat = '', $no_rkm_medis = '')
 {
     date_default_timezone_set('Asia/Jakarta');
+
+    // Fallback ke session jika parameter kosong
+    $no_rawat = $no_rawat ?: $_SESSION['no_rawat'] ?? '';
+    $no_rkm_medis = $no_rkm_medis ?: $_SESSION['no_rkm_medis'] ?? '';
 
     // Inisialisasi data default
     $pasien = $_SESSION['pasien_data'] ?? [
@@ -68,6 +72,8 @@ function getPatientData($pdo, $no_rawat = '', $no_rkm_medis = '')
             $st->execute([$no_rawat, $no_rkm_medis]);
             $pasien = $st->fetch(PDO::FETCH_ASSOC) ?: $pasien;
             $_SESSION['pasien_data'] = $pasien;
+            $_SESSION['no_rawat'] = $pasien['no_rawat'] ?? $no_rawat;
+            $_SESSION['no_rkm_medis'] = $pasien['no_rkm_medis'] ?? $no_rkm_medis;
         } catch (PDOException $e) {
             error_log("Error in main query: " . $e->getMessage());
         }
@@ -81,6 +87,7 @@ function getPatientData($pdo, $no_rawat = '', $no_rkm_medis = '')
             $st->execute([$no_rkm_medis]);
             $pasien = $st->fetch(PDO::FETCH_ASSOC) ?: $pasien;
             $_SESSION['pasien_data'] = $pasien;
+            $_SESSION['no_rkm_medis'] = $no_rkm_medis;
         } catch (PDOException $e) {
             error_log("Error in fallback query: " . $e->getMessage());
         }

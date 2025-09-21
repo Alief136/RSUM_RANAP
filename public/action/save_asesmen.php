@@ -3,7 +3,8 @@ require_once __DIR__ . '/../../config/db.php';
 date_default_timezone_set('Asia/Jakarta');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: /RSUM_RANAP/public/pages/asesmen.php');
+    // Perbaikan jalur redirect untuk kasus non-POST
+    header('Location: ../pages/asesmen.php');
     exit;
 }
 
@@ -100,9 +101,10 @@ try {
         $nip
     ]);
 
-    header('Location: /RSUM_RANAP/public/pages/asesmen.php?no_rkm_medis=' . urlencode($no_rkm_medis) . '&msg=saved');
+    header('Location: ../Pages/asesmen.php?no_rkm_medis=' . urlencode($no_rkm_medis) . '&no_rawat=' . urlencode($no_rawat) . '&msg=saved');
     exit;
 } catch (PDOException $e) {
-    header('Location: /RSUM_RANAP/public/pages/asesmen.php?no_rawat=' . urlencode($no_rawat) . '&msg=error');
+    // PERBAIKAN JALUR: Menggunakan jalur relatif untuk konsistensi
+    header('Location: asesmen.php?no_rkm_medis=' . urlencode($no_rkm_medis) . '&no_rawat=' . urlencode($no_rawat) . '&msg=error');
     exit;
 }

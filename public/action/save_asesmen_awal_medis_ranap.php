@@ -230,7 +230,10 @@ try {
 
     // Redirect kembali ke form dengan success message
     $message = urlencode('Asesmen berhasil disimpan dengan status Aktif.');
-    header("Location: ../pages/asesmen_awal.php?no_rawat=" . urlencode($no_rawat) . "&status=success&message=" . $message);
+    header("Location: ../pages/asesmen_awal.php?no_rkm_medis=" . urlencode($no_rkm_medis) .
+        "&no_rawat=" . urlencode($no_rawat) .
+        "&status=success&message=" . $message);
+
     exit;
 } catch (Exception $e) {
     // Rollback jika ada error
@@ -238,6 +241,9 @@ try {
     // Handle error
     error_log("Error saving asesmen: " . $e->getMessage());
     $message = urlencode('Gagal menyimpan asesmen: ' . $e->getMessage());
-    header("Location: ../pages/asesmen_awal.php?no_rawat=" . urlencode($no_rawat) . "&status=error&message=" . $message);
+    header("Location: ../pages/asesmen_awal.php?no_rkm_medis=" . urlencode($no_rkm_medis) .
+        "&no_rawat=" . urlencode($no_rawat) .
+        "&status=error&message=" . $message);
+
     exit;
 }

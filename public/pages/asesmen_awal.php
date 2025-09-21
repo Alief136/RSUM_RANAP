@@ -1194,7 +1194,11 @@ function section($title)
                 $no_rawat = isset($_GET['no_rawat']) ? $_GET['no_rawat'] : ''; // Ensure no_rawat is available
                 ?>
                 <!-- Existing buttons, e.g., Save, Cancel, etc. -->
-                <a href="../pages/riwayat_pasien.php?no_rawat=<?php echo urlencode($no_rawat); ?>" class="btn">Lihat Riwayat Asesmen Pasien</a>
+                <a href="riwayat_asesmen_pasien.php?no_rawat=<?= urlencode($no_rawat) ?>&no_rkm_medis=<?= urlencode($no_rkm_medis) ?>"
+                    class="btn btn-secondary">
+                    Lihat Riwayat Asesmen
+                </a>
+
             </div>
     </div>
 </div>
