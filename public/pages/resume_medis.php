@@ -4,11 +4,22 @@
 
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
+require_once '../action/get_pasien_info.php'; // Load helper dari action/
 
+// Ambil parameter dari URL/POST
+$no_rawat = $_POST['no_rawat'] ?? $_GET['no_rawat'] ?? '';
+$no_rkm_medis = $_POST['no_rkm_medis'] ?? $_GET['no_rkm_medis'] ?? '';
+
+// Ambil data pasien menggunakan helper
+$data = getPatientData($pdo, $no_rawat, $no_rkm_medis);
+$pasien = $data['pasien'];
+$umur = $data['umur'];
+
+// Set judul halaman
 $title = "RESUME MEDIS (DISCHARGE SUMMARY)";
 require_once '../partials/header.php';
 
-// Helper section
+// Helper untuk section header
 function section($title)
 {
     return "<h5 class='mt-4 mb-3 fw-bold border-bottom pb-2'>$title</h5>";
@@ -21,6 +32,12 @@ function section($title)
             <i class="fas fa-file-medical me-2"></i>
             <h4 class="mb-0 fw-bold"><?= htmlspecialchars($title) ?></h4>
         </div>
+
+        <?php if (isset($_GET['status'])): ?>
+            <div class="alert alert-<?= $_GET['status'] === 'success' ? 'success' : 'danger' ?>">
+                <?= esc(urldecode($_GET['message'] ?? 'Unknown error')) ?>
+            </div>
+        <?php endif; ?>
 
         <form class="needs-validation" novalidate>
             <!-- Identitas Pasien -->
@@ -37,33 +54,33 @@ function section($title)
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold text-gray"><i class="fas fa-user me-1"></i> Nama Pasien</label>
-                                    <input type="text" class="form-control" name="nama_pasien" required>
+                                    <input type="text" class="form-control" name="nama_pasien" value="<?= esc($pasien['nm_pasien'] ?? '') ?>" readonly required>
                                     <div class="invalid-feedback">Nama pasien wajib diisi.</div>
                                 </div>
                                 <div class="col-md-2 mb-3">
                                     <label class="form-label fw-bold text-gray"><i class="fas fa-venus-mars me-1"></i> Jenis Kelamin</label>
-                                    <select class="form-select" name="sex" required>
+                                    <select class="form-select" name="sex" disabled required>
                                         <option value="" disabled selected>Pilih</option>
-                                        <option value="L">Laki-laki</option>
-                                        <option value="P">Perempuan</option>
+                                        <option value="L" <?= ($pasien['jk'] ?? '') === 'L' ? 'selected' : '' ?>>Laki-laki</option>
+                                        <option value="P" <?= ($pasien['jk'] ?? '') === 'P' ? 'selected' : '' ?>>Perempuan</option>
                                     </select>
                                     <div class="invalid-feedback">Jenis kelamin wajib dipilih.</div>
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label fw-bold text-gray"><i class="fas fa-id-card me-1"></i> No. Rekam Medis</label>
-                                    <input type="text" class="form-control" name="no_rm" maxlength="8" style="font-family: monospace; letter-spacing: 1px;" required>
+                                    <input type="text" class="form-control" name="no_rm" value="<?= esc($pasien['no_rkm_medis'] ?? '') ?>" maxlength="8" style="font-family: monospace; letter-spacing: 1px;" readonly required>
                                     <div class="invalid-feedback">No. Rekam Medis wajib diisi.</div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label fw-bold text-gray"><i class="fas fa-calendar-alt me-1"></i> Tanggal Lahir</label>
-                                    <input type="date" class="form-control" name="tgl_lahir" id="tgl_lahir_input" required>
+                                    <input type="date" class="form-control" name="tgl_lahir" id="tgl_lahir_input" value="<?= esc($pasien['tgl_lahir'] ?? '') ?>" readonly required>
                                     <div class="invalid-feedback">Tanggal lahir wajib diisi.</div>
                                 </div>
                                 <div class="col-md-2 mb-3">
                                     <label class="form-label fw-bold text-gray"><i class="fas fa-child me-1"></i> Umur</label>
-                                    <input type="text" class="form-control" name="umur" id="umur_input" placeholder="bln/th" readonly>
+                                    <input type="text" class="form-control" name="umur" id="umur_input" value="<?= esc($umur) ?>" placeholder="bln/th" readonly required>
                                     <div class="invalid-feedback">Umur wajib diisi.</div>
                                 </div>
                                 <div class="col-md-3 mb-3">
@@ -85,7 +102,7 @@ function section($title)
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-bold text-gray"><i class="fas fa-home me-1"></i> Alamat</label>
-                                <input type="text" class="form-control" name="alamat">
+                                <input type="text" class="form-control" name="alamat" value="<?= esc($pasien['alamat'] ?? '') ?>" readonly>
                             </div>
                         </div>
                     </div>
@@ -181,7 +198,6 @@ function section($title)
                         </div>
                         <div class="card-body">
                             <div class="mb-3">
-
                                 <div class="mb-2">
                                     <label class="form-label">Laboratorium :</label>
                                     <textarea class="form-control" rows="3" name="laboratorium"></textarea>
@@ -228,7 +244,6 @@ function section($title)
                                 <div class="mb-3">
                                     <label class="form-label">Medikamentosa saat perawatan :</label>
                                     <textarea class="form-control" rows="4" name="medikamentosa_perawatan"></textarea>
-
                                 </div>
                                 <div class="mb-2">
                                     <label class="form-label">Medikamentosa saat pulang :</label>
@@ -348,8 +363,6 @@ function section($title)
                 </div>
             </div>
 
-            <!-- Note -->
-
             <!-- Tanda Tangan -->
             <?= section("Tanda Tangan") ?>
             <div class="row mb-3 d-flex align-items-stretch">
@@ -407,4 +420,5 @@ function section($title)
         </form>
     </div>
 </div>
+
 <script src="../js/main.js"></script>

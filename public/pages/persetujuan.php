@@ -1,12 +1,25 @@
 <link href="../css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="../css/navbar,css">
 <link rel="stylesheet" href="../css/pagesStyle.css">
+
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
+require_once '../action/get_pasien_info.php'; // Load helper dari action/
 
+// Ambil parameter dari URL/POST
+$no_rawat = $_POST['no_rawat'] ?? $_GET['no_rawat'] ?? '';
+$no_rkm_medis = $_POST['no_rkm_medis'] ?? $_GET['no_rkm_medis'] ?? '';
+
+// Ambil data pasien menggunakan helper
+$data = getPatientData($pdo, $no_rawat, $no_rkm_medis);
+$pasien = $data['pasien'];
+$umur = $data['umur'];
+
+// Set judul halaman
 $title = "Form Persetujuan Tindakan Kedokteran Anestesi";
 require_once '../partials/header.php';
-// Helper function for section headers
+
+// Helper untuk section header
 function section($title)
 {
     return "<h5 class='mt-4 mb-3 fw-bold border-bottom pb-2'>$title</h5>";
@@ -20,6 +33,12 @@ function section($title)
             <i class="fas fa-file-medical me-2" style="color: #f5f5f5 !important;"></i>
             <h4 class="mb-0 fw-bold"><?= htmlspecialchars($title) ?></h4>
         </div>
+
+        <?php if (isset($_GET['status'])): ?>
+            <div class="alert alert-<?= $_GET['status'] === 'success' ? 'success' : 'danger' ?>">
+                <?= esc(urldecode($_GET['message'] ?? 'Unknown error')) ?>
+            </div>
+        <?php endif; ?>
 
         <form method="post" action="" class="needs-validation" novalidate>
             <!-- Identitas Pasien -->
@@ -35,50 +54,50 @@ function section($title)
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold text-gray"><i class="fas fa-user me-1"></i> Nama</label>
-                                    <input type="text" class="form-control" name="nama_pasien" required>
+                                    <input type="text" class="form-control" name="nama_pasien" value="<?= esc($pasien['nm_pasien'] ?? '') ?>" readonly required>
                                     <div class="invalid-feedback">Nama wajib diisi.</div>
                                 </div>
                                 <div class="col-md-3 mb-3">
                                     <label class="form-label fw-bold text-gray"><i class="fas fa-calendar-alt me-1"></i> Tanggal Lahir</label>
-                                    <input type="date" class="form-control" name="tgl_lahir" required>
+                                    <input type="date" class="form-control" name="tgl_lahir" value="<?= esc($pasien['tgl_lahir'] ?? '') ?>" readonly required>
                                     <div class="invalid-feedback">Tanggal lahir wajib diisi.</div>
                                 </div>
                                 <div class="col-md-3 mb-3">
                                     <label class="form-label fw-bold text-gray"><i class="fas fa-child me-1"></i> Umur</label>
-                                    <input type="text" class="form-control" name="umur" placeholder="th/bln" required>
+                                    <input type="text" class="form-control" name="umur" value="<?= esc($umur) ?>" placeholder="th/bln" readonly required>
                                     <div class="invalid-feedback">Umur wajib diisi.</div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold text-gray"><i class="fas fa-home me-1"></i> Alamat</label>
-                                    <input type="text" class="form-control" name="alamat" required>
+                                    <input type="text" class="form-control" name="alamat" value="<?= esc($pasien['alamat'] ?? '') ?>" readonly required>
                                     <div class="invalid-feedback">Alamat wajib diisi.</div>
                                 </div>
                                 <div class="col-md-3 mb-3">
                                     <label class="form-label fw-bold text-gray"><i class="fas fa-venus-mars me-1"></i> Jenis Kelamin</label>
-                                    <select class="form-select" name="sex" required>
+                                    <select class="form-select" name="sex" disabled required>
                                         <option value="" disabled selected>Pilih...</option>
-                                        <option value="L">Laki-laki</option>
-                                        <option value="P">Perempuan</option>
+                                        <option value="L" <?= ($pasien['jk'] ?? '') === 'L' ? 'selected' : '' ?>>Laki-laki</option>
+                                        <option value="P" <?= ($pasien['jk'] ?? '') === 'P' ? 'selected' : '' ?>>Perempuan</option>
                                     </select>
                                     <div class="invalid-feedback">Jenis kelamin wajib dipilih.</div>
                                 </div>
                                 <div class="col-md-3 mb-3">
                                     <label class="form-label fw-bold text-gray"><i class="fas fa-id-card me-1"></i> No Rekam Medis</label>
-                                    <input type="text" class="form-control" name="no_rm" required>
+                                    <input type="text" class="form-control" name="no_rm" value="<?= esc($pasien['no_rkm_medis'] ?? '') ?>" readonly required>
                                     <div class="invalid-feedback">No RM wajib diisi.</div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold text-gray"><i class="fas fa-calendar-check me-1"></i> Tanggal Kunjungan</label>
-                                    <input type="date" class="form-control" name="tgl_kunjungan" required>
+                                    <input type="date" class="form-control" name="tgl_kunjungan" value="<?= esc($pasien['tgl_masuk'] ?? '') ?>" required>
                                     <div class="invalid-feedback">Tanggal kunjungan wajib diisi.</div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold text-gray"><i class="fas fa-clock me-1"></i> Jam Kunjungan</label>
-                                    <input type="time" class="form-control" name="jam_kunjungan" required>
+                                    <input type="time" class="form-control" name="jam_kunjungan" value="<?= esc($pasien['jam_masuk'] ?? '') ?>" required>
                                     <div class="invalid-feedback">Jam kunjungan wajib diisi.</div>
                                 </div>
                             </div>
@@ -185,7 +204,7 @@ function section($title)
                 </table>
             </div>
 
-            <!-- Pernyataan setelah Butir Informasi -->
+            <!-- Pernyataan -->
             <?= section("Pernyataan") ?>
             <div class="row mb-3 d-flex align-items-stretch">
                 <div class="col-md-12">
@@ -265,9 +284,10 @@ function section($title)
                                 $opsi = ["Saya", "Anak", "Istri", "Suami", "Orang Tua", "Lain-lain"];
                                 foreach ($opsi as $o) {
                                     $id = strtolower(str_replace(" ", "_", $o));
+                                    $checked = ($o === "Saya" && !empty($pasien['nm_pasien'])) ? 'checked' : '';
                                     echo "
                                     <div class='form-check'>
-                                        <input class='form-check-input' type='radio' name='terhadap' id='$id' value='$o' required>
+                                        <input class='form-check-input' type='radio' name='terhadap' id='$id' value='$o' $checked required>
                                         <label class='form-check-label text-info' for='$id'>$o</label>
                                     </div>";
                                 }
@@ -276,17 +296,17 @@ function section($title)
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-bold text-info"><i class="fas fa-user me-1"></i> Nama Pasien yang Ditindak</label>
-                                <input type="text" class="form-control" name="nama_tindakan" required>
+                                <input type="text" class="form-control" name="nama_tindakan" value="<?= esc($pasien['nm_pasien'] ?? '') ?>" readonly required>
                                 <div class="invalid-feedback">Nama pasien wajib diisi.</div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-bold text-info"><i class="fas fa-home me-1"></i> Alamat Pasien yang Ditindak</label>
-                                <input type="text" class="form-control" name="alamat_tindakan" required>
+                                <input type="text" class="form-control" name="alamat_tindakan" value="<?= esc($pasien['alamat'] ?? '') ?>" readonly required>
                                 <div class="invalid-feedback">Alamat pasien wajib diisi.</div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-bold text-info"><i class="fas fa-calendar-alt me-1"></i> Tanggal Lahir Pasien yang Ditindak</label>
-                                <input type="date" class="form-control" name="tgl_lahir_tindakan" required>
+                                <input type="date" class="form-control" name="tgl_lahir_tindakan" value="<?= esc($pasien['tgl_lahir'] ?? '') ?>" readonly required>
                                 <div class="invalid-feedback">Tanggal lahir pasien wajib diisi.</div>
                             </div>
                         </div>
@@ -331,7 +351,7 @@ function section($title)
                                 </div>
                             </div>
 
-                            <!--TANGGAL + JAM-->
+                            <!-- TANGGAL + JAM -->
                             <div class="text-center mt-3">
                                 <div class="row justify-content-center">
                                     <div class="col-md-4 mb-2">
@@ -339,7 +359,6 @@ function section($title)
                                             <i class="fas fa-calendar-alt me-1"></i> Tanggal
                                         </label>
                                         <input type="date" class="form-control" name="tgl_surat" required>
-
                                     </div>
                                     <div class="col-md-4 mb-2">
                                         <label class="form-label fw-bold text-orange">

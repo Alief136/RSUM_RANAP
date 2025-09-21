@@ -2,91 +2,32 @@
 <link rel="stylesheet" href="../css/navbar,css">
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
-require_once '../../config/db.php';
-date_default_timezone_set('Asia/Jakarta');
+require_once '../action/get_pasien_info.php'; // Load helper dari action/
 
-if (!function_exists('esc')) {
-    function esc($s)
-    {
-        return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');
-    }
-}
-
-// Ambil parameter dari URL / POST
+// Ambil parameter dari URL/POST
 $no_rawat = $_POST['no_rawat'] ?? $_GET['no_rawat'] ?? '';
 $no_rkm_medis = $_POST['no_rkm_medis'] ?? $_GET['no_rkm_medis'] ?? '';
 
-// Inisialisasi data pasien
-$pasien = $_SESSION['pasien_data'] ?? ['no_rkm_medis' => '', 'nm_pasien' => '', 'tgl_lahir' => '', 'jk' => '', 'alamat' => '', 'agama' => '', 'stts_nikah' => ''];
+// Ambil data pasien menggunakan helper
+$data = getPatientData($pdo, $no_rawat, $no_rkm_medis);
+$pasien = $data['pasien'];
+$umur = $data['umur'];
 
-// Kalau no_rawat kosong tapi ada no_rkm_medis → ambil rawat terakhir pasien
-if ($no_rawat === '' && $no_rkm_medis !== '') {
-    $sqlLast = "SELECT rp.no_rawat
-        FROM reg_periksa rp
-        LEFT JOIN kamar_inap ki ON ki.no_rawat = rp.no_rawat
-        WHERE rp.no_rkm_medis = ?
-        ORDER BY
-          COALESCE(CONCAT(ki.tgl_masuk, ' ', COALESCE(ki.jam_masuk, '00:00:00')),
-                  CONCAT(rp.tgl_registrasi, ' ', rp.jam_reg)) DESC
-        LIMIT 1";
-    try {
-        $stLast = $pdo->prepare($sqlLast);
-        $stLast->execute([$no_rkm_medis]);
-        $no_rawat = $stLast->fetchColumn() ?: '';
-    } catch (PDOException $e) {
-        error_log("Error in last rawat query: " . $e->getMessage());
-        $no_rawat = '';
-    }
-}
+// Ambil tgl_masuk dan jam_masuk dari data pasien jika tersedia
+$tgl_masuk = $pasien['tgl_masuk'] ?? '';
+$jam_masuk = $pasien['jam_masuk'] ?? '';
 
-// Ambil identitas pasien + no_rawat
-if ($no_rawat) {
-    $sql = "SELECT rp.no_rawat, rp.no_rkm_medis, p.nm_pasien, p.tgl_lahir, p.jk, p.alamat, p.agama, p.stts_nikah
-            FROM reg_periksa rp
-            JOIN pasien p ON p.no_rkm_medis = rp.no_rkm_medis
-            LEFT JOIN kamar_inap ki ON ki.no_rawat = rp.no_rawat
-            WHERE (rp.no_rkm_medis = ? OR rp.no_rawat = ?)
-            LIMIT 1";
-    try {
-        $st = $pdo->prepare($sql);
-        $st->execute([$no_rkm_medis, $no_rawat]);
-        $pasien = $st->fetch(PDO::FETCH_ASSOC) ?: $pasien;
-        $_SESSION['pasien_data'] = $pasien;
-    } catch (PDOException $e) {
-        error_log("Error in main query: " . $e->getMessage());
-    }
-} elseif ($no_rkm_medis) {
-    $sql = "SELECT no_rkm_medis, nm_pasien, tgl_lahir, jk, alamat, agama, stts_nikah
-            FROM pasien
-            WHERE no_rkm_medis = ?
-            LIMIT 1";
-    try {
-        $st = $pdo->prepare($sql);
-        $st->execute([$no_rkm_medis]);
-        $pasien = $st->fetch(PDO::FETCH_ASSOC) ?: $pasien;
-        $_SESSION['pasien_data'] = $pasien;
-    } catch (PDOException $e) {
-        error_log("Error in fallback query: " . $e->getMessage());
-    }
-}
-
-// Hitung umur
-$umur = '';
-if (!empty($pasien['tgl_lahir'])) {
-    $birthDate = new DateTime($pasien['tgl_lahir']);
-    $today = new DateTime(date('Y-m-d'));
-    $diff = $today->diff($birthDate);
-    $umur = $diff->y . ' thn ' . $diff->m . ' bln ' . $diff->d . ' hr';
-}
-
+// Set judul halaman
 $title = "Form Asesmen Awal Medis Rawat Inap - UGD Dewasa";
 require_once '../partials/header.php';
 
+// Helper untuk section header
 function section($title)
 {
     return "<h5 class='mt-4 mb-2 fw-bold border-bottom pb-2'>$title</h5>";
 }
 ?>
+
 
 <link rel="stylesheet" href="../css/pagesStyle.css">
 
