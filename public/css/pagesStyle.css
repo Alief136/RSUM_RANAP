@@ -1,0 +1,866 @@
+
+/* Existing styles up to Prioritas & Kebutuhan Pasien remain unchanged */
+
+/* ===== Navbar Basic ===== */
+
+
+
+
+body:not(.navbar) {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+/* ===== Konten ===== */
+.content {
+  padding: 20px;
+  flex: 1;
+}
+
+/* ===== Layout dasar biar footer nempel bawah ===== */
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.footer {
+  background: #333;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+}
+
+/* ===== Form Modern Style ===== */
+form {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-bottom: 10px;
+}
+
+form h3 {
+  margin-top: 20px;
+  color: #333;
+}
+
+label {
+  font-weight: 600;
+  margin-top: 10px;
+  display: block;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+textarea,
+select {
+  width: 100%;
+  padding: 6px 8px;
+  margin-top: 4px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+textarea {
+  resize: none;
+  
+}
+
+button {
+  background: #0d6efd;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #baeaf0;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* ===== MEDICAL TABLE IMPROVEMENTS ===== */
+.medical-table-container {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+.table-medical {
+  width: 100%;
+  border-collapse: collapse;
+  background: transparent !important;
+  margin-bottom: 20px;
+}
+
+.table-medical tr {
+  border-bottom: 2px solid #e6e6e6;
+}
+
+.table-medical tr:nth-child(odd) {
+  background-color: #efefef !important;
+}
+
+.table-medical tr:nth-child(even) {
+  background-color: #ffffffbc !important;
+}
+
+.table-medical tr:hover {
+  background-color: #eaf2ff !important;
+  transition: background 0.2s ease;
+}
+
+.table-medical th,
+.table-medical td {
+  padding: 14px 16px;
+  vertical-align: top;
+  border: none;
+  background: inherit !important;
+}
+
+.table-medical td.label-col {
+  width: 30%;
+  font-weight: 600;
+  border-right: 3px solid #dee2e6;
+  color: #333;
+}
+
+.table-medical td.input-col {
+  width: 70%;
+}
+
+.table-medical textarea.form-control,
+.table-medical input.form-control,
+.table-medical select.form-select {
+  width: 100%;
+  margin: 4px 0;
+  font-size: 14px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.table-medical textarea.form-control:focus,
+.table-medical input.form-control:focus,
+.table-medical select.form-select:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.15rem rgba(0,123,255,0.25);
+  outline: none;
+}
+
+/* === CARD PILIHAN (RADIO / CHECKBOX) === */
+.selectable-card {
+  cursor: pointer;
+  display: block;
+  transition: all 0.2s ease;
+  border-radius: 10px;
+  height: 100%;
+  position: relative;
+}
+
+.selectable-card input[type="radio"],
+.selectable-card input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.card-content {
+  border: 2px solid #dee2e6;
+  border-radius: 10px;
+  height: 100%;
+  padding: 1rem;
+  transition: all 0.2s ease;
+}
+
+.selectable-card:hover .card-content {
+  border-color: #0d6efd;
+  background-color: #f8f9fa;
+}
+
+.selectable-card input:checked + .card-content {
+  background-color: #e7f1ff;
+  border-color: #0d6efd;
+  box-shadow: 0 0 6px rgba(13, 110, 253, 0.4);
+}
+
+/* ===== Assesmen & Planning Enhancements ===== */
+.assesmen-card, .planning-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.assesmen-card:hover, .planning-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+  padding: 10px 15px;
+  border-radius: 10px 10px 0 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.assesmen-card .card-header {
+  background: linear-gradient(135deg, #0d6efd, #5294ff);
+}
+
+.planning-card .card-header {
+  background: linear-gradient(135deg, #28a745, #5bc774);
+}
+
+.assesmen-textarea, .planning-textarea {
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.assesmen-textarea:focus, .planning-textarea:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.assesmen-textarea {
+  background: #f8faff;
+  resize: none;
+}
+
+.planning-textarea {
+  background: #f8fff8;
+  resize: none;
+}
+
+.form-label.text-primary {
+  color: #0d6efd !important;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+.form-label.text-success {
+  color: #28a745 !important;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .assesmen-card, .planning-card {
+    margin-bottom: 20px;
+  }
+  .card-header {
+    font-size: 1rem;
+  }
+  .assesmen-textarea, .planning-textarea {
+    font-size: 0.9rem;
+  }
+}
+
+/* ===== Subjektif Enhancements ===== */
+.subjektif-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.subjektif-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.subjektif-card .card-header {
+  padding: 10px 15px;
+  border-radius: 10px 10px 0 0;
+  background: linear-gradient(135deg, #17a2b8, #5bc8de);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.subjektif-textarea {
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 0.95rem;
+  background: #f8fdff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  resize: none;
+}
+
+.subjektif-textarea:focus {
+  border-color: #17a2b8;
+  box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);
+}
+
+.form-label.text-info {
+  color: #17a2b8 !important;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .subjektif-card {
+    margin-bottom: 20px;
+  }
+  .subjektif-card .card-header {
+    font-size: 1rem;
+  }
+  .subjektif-textarea {
+    font-size: 0.9rem;
+    min-height: 80px;
+  }
+}
+
+/* ===== Survey Primer Enhancements ===== */
+.survey-primer-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.survey-primer-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.survey-primer-card.visible {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.bg-purple {
+  background: linear-gradient(135deg, #6f42c1, #9f7aea);
+}
+
+.survey-primer-card .card-header {
+  padding: 10px 15px;
+  border-radius: 10px 10px 0 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.form-label.text-purple {
+  color: #6f42c1 !important;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+}
+
+.survey-primer-card .form-check-input:checked {
+  background-color: #6f42c1;
+  border-color: #6f42c1;
+}
+
+.survey-primer-card .form-control:focus {
+  border-color: #6f42c1;
+  box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25);
+  resize: none;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .survey-primer-card {
+    margin-bottom: 20px;
+  }
+  .survey-primer-card .card-header {
+    font-size: 1rem;
+  }
+  .survey-primer-card .form-control,
+  .survey-primer-card .form-check-label {
+    font-size: 0.9rem;
+  }
+}
+
+/* ===== Prioritas & Kebutuhan Pasien Enhancements ===== */
+.prioritas-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.prioritas-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.prioritas-card.visible {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.bg-red {
+  background: linear-gradient(135deg, #dc3545, #f16d7a);
+}
+
+.prioritas-card .card-header {
+  padding: 10px 15px;
+  border-radius: 10px 10px 0 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.form-label.text-red {
+  color: #dc3545 !important;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+}
+
+.prioritas-card .form-check-input:checked {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.prioritas-card .form-control {
+  background: #fff5f5;
+}
+
+.prioritas-card .form-control:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+/* ===== Tindak Lanjut Enhancements ===== */
+.tindak-lanjut-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  
+}
+
+.tindak-lanjut-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.tindak-lanjut-card.visible {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.bg-orange {
+  background: linear-gradient(135deg, #fd7e14, #ff9f43);
+}
+
+.tindak-lanjut-card .card-header {
+  padding: 10px 15px;
+  border-radius: 10px 10px 0 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.form-label.text-orange {
+  color: #fd7e14 !important;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+}
+
+.tindak-lanjut-card .form-check-input:checked {
+  background-color: #fd7e14;
+  border-color: #fd7e14;
+}
+
+.tindak-lanjut-card .form-control {
+  background: #fff3e0;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 0.9rem;
+}
+
+.tindak-lanjut-card .form-control:focus {
+  border-color: #fd7e14;
+  box-shadow: 0 0 0 0.2rem rgba(253, 126, 20, 0.25);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .tindak-lanjut-card {
+    margin-bottom: 20px;
+  }
+  .tindak-lanjut-card .card-header {
+    font-size: 1rem;
+  }
+  .tindak-lanjut-card .form-control,
+  .tindak-lanjut-card .form-check-label,
+  .tindak-lanjut-card .card-content {
+    font-size: 0.9rem;
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .prioritas-card {
+    margin-bottom: 20px;
+  }
+  .prioritas-card .card-header {
+    font-size: 1rem;
+  }
+  .prioritas-card .form-control,
+  .prioritas-card .form-check-label {
+    font-size: 0.9rem;
+  }
+}
+
+
+
+/* ===== Identitas Pasien Enhancements ===== */
+.identitas-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.identitas-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.identitas-card.visible {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.bg-gray {
+  background: linear-gradient(135deg, #000000, #adb5bd);
+}
+
+.identitas-card .card-header {
+  padding: 10px 15px;
+  border-radius: 10px 10px 0 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.form-label.text-gray {
+  color: #000000 !important;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+}
+
+.identitas-card .form-control,
+.identitas-card .form-select {
+  background: #f8f9fa;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 0.9rem;
+}
+
+.identitas-card .form-control:focus,
+.identitas-card .form-select:focus {
+  border-color: #6c757d;
+  box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .identitas-card {
+    margin-bottom: 20px;
+  }Responsive
+  .identitas-card .card-header {
+    font-size: 1rem;
+  }
+  .identitas-card .form-control,
+  .identitas-card .form-select,
+  .identitas-card .form-label {
+    font-size: 0.9rem;
+  }
+}
+/* Existing styles up to Identitas Pasien Enhancements remain unchanged */
+
+/* ===== Survey Sekunder Enhancements ===== */
+.survey-sekunder-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.survey-sekunder-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(5, 193, 255, 0.2);
+}
+
+.bg-teal {
+    background: linear-gradient(135deg, rgb(23, 162, 184), rgb(91, 200, 222));
+}
+
+.survey-sekunder-card.visible {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.survey-sekunder-card .card-header {
+  padding: 10px 15px;
+  border-radius: 10px 10px 0 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.form-label.text-teal {
+  color: #17a2b8 !important;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+}
+
+.survey-sekunder-card .form-control {
+  background: #f8fdff;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 0.9rem;
+  resize: none;
+}
+
+.survey-sekunder-card .form-control:focus {
+  border-color: #17a2b8;
+  box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);
+}
+
+/*  Adjustments */
+@media (max-width: 768px) {
+  .survey-sekunder-card {
+    margin-bottom: 20px;
+  }
+  .survey-sekunder-card .card-header {
+    font-size: 1rem;
+  }
+  .survey-sekunder-card .form-control,
+  .survey-sekunder-card .form-label {
+    font-size: 0.9rem;
+  }
+}
+
+/* ===== Form Title Enhancements ===== */
+.form-title-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.form-title-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.form-title-card.visible {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.bg-dark-blue {
+    background: linear-gradient(135deg, #111e6c, #2c3a91);
+}
+
+.form-title-card .card-header {
+    padding: 15px 20px;
+    border-radius: 12px 12px 0 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.table-checkbox {
+  width: 20px;         
+  cursor: pointer;
+  accent-color: #0d6efd; 
+  margin: 0 auto;       
+  display: block;       
+}
+
+/* Compact Selectable Card (moved from asesmen_awal.php) */
+.compact-selectable-card {
+  cursor: pointer;
+  display: block;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  margin-bottom: 2px;
+}
+
+.compact-selectable-card input[type="checkbox"],
+.compact-selectable-card input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.compact-card-content {
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.compact-selectable-card:hover .compact-card-content {
+  border-color: #0d6efd;
+  background-color: #f8f9fa;
+}
+
+.compact-selectable-card input:checked + .compact-card-content {
+  background-color: #e7f1ff;
+  border-color: #0d6efd;
+  box-shadow: 0 0 4px rgba(13, 110, 253, 0.3);
+}
+
+
+.compact-selectable-card input[type="radio"]:checked + .compact-card-content {
+  background-color: #e7f1ff !important;
+  border-color: #0d6efd !important;
+}
+
+
+.survey-primer-card .card-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 450px;
+  justify-content: space-between;
+}
+
+/* Styling untuk Tanda Vital Card */
+.vital-signs-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.vital-signs-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.vital-signs-card .card-header {
+  padding: 10px 15px;
+  border-radius: 10px 10px 0 0;
+  background: linear-gradient(135deg, #6f42c1, #9f7aea); /* Menggunakan warna yang sama dengan Survey Primer */
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* Mengatur tata letak input Tanda Vital menjadi satu baris */
+.vital-signs-input-group .row {
+  display: flex;
+  flex-wrap: nowrap; /* Penting: Mencegah kolom pindah ke baris baru */
+  gap: 1rem; /* Memberikan jarak antar kolom */
+}
+
+/* Mengatur lebar input agar responsif */
+.vital-signs-input-group .col-md,
+.vital-signs-input-group .col-6 {
+  flex: 1 1 auto; /* Memungkinkan kolom untuk menyesuaikan lebar secara fleksibel */
+  min-width: 0;
+}
+
+/* Pastikan row memiliki Flexbox untuk menyamakan tinggi kolom */
+.row.align-items-stretch {
+    display: flex;
+    flex-wrap: wrap; /* Memastikan responsif pada layar kecil */
+}
+
+/* Kunci untuk menyamakan tinggi kartu */
+.card-with-equal-height {
+    height: 100%; /* Kartu akan mengisi seluruh tinggi yang tersedia di kolom */
+    display: flex;
+    flex-direction: column;
+}
+
+.card-with-equal-height .card-body {
+    flex-grow: 1; /* Konten badan kartu akan memanjang untuk mengisi ruang */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Pastikan styling untuk compact-selectable-card dan prioritas-card tetap berlaku */
+.compact-selectable-card {
+    cursor: pointer;
+    display: block;
+    transition: all 0.2s ease;
+    border-radius: 10px;
+    height: 100%;
+    position: relative;
+}
+
+.compact-selectable-card input[type="radio"],
+.compact-selectable-card input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.compact-selectable-card:hover .card {
+    border-color: #ff0000;
+    background-color: #fffafb;
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
+}
+
+.compact-selectable-card input:checked + .card {
+    border-color: #dc3545;
+    background-color: #fff0f1;
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.4);
+}
+
+/* Hapus list style bawaan dan atur ulang padding */
+ul.priority-list {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-bottom: 0;
+    font-size: 0.85rem;
+}
